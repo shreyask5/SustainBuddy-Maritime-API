@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maritime Sustainability Consultant</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #0369a1 0%, #1e40af 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+            width: 90%;
+            max-width: 800px;
+            height: 80vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #0369a1 0%, #1e40af 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+        }
+
+        .header h1 {
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+        }
+
+        .status {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #4ade80;
+            animation: pulse 2s infinite;
+        }
+
+        .status-dot.error {
+            background: #f87171;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .chat-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            background: #f8fafc;
+        }
+
+        .message {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .message.user {
+            flex-direction: row-reverse;
+        }
+
+        .message-content {
+            max-width: 70%;
+            padding: 12px 16px;
+            border-radius: 18px;
+            font-size: 0.95rem;
+            line-height: 1.4;
+            white-space: pre-wrap;
+        }
+
+        .message.user .message-content {
+            background: linear-gradient(135deg, #0369a1 0%, #1e40af 100%);
+            color: white;
+        }
+
+        .message.bot .message-content {
+            background: white;
+            border: 1px solid #e2e8f0;
+            color: #1e293b;
+        }
+
+        .message-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+
+        .message.user .message-avatar {
+            background: linear-gradient(135deg, #0369a1 0%, #1e40af 100%);
+            color: white;
+        }
+
+        .message.bot .message-avatar {
+            background: #f1f5f9;
+            color: #64748b;
+        }
+
+        .input-container {
+            padding: 20px;
+            background: white;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .input-form {
+            display: flex;
+            gap: 10px;
+            align-items: flex-end;
+        }
+
+        .input-wrapper {
+            flex: 1;
+            position: relative;
+        }
+
+        #messageInput {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 25px;
+            font-size: 0.95rem;
+            resize: none;
+            outline: none;
+            transition: border-color 0.2s ease;
+            max-height: 100px;
+            min-height: 45px;
+        }
+
+        #messageInput:focus {
+            border-color: #0369a1;
+        }
+
+        #sendButton {
+            background: linear-gradient(135deg, #0369a1 0%, #1e40af 100%);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        #sendButton:hover:not(:disabled) {
+            transform: scale(1.05);
+        }
+
+        #sendButton:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .control-btn {
+            background: #f1f5f9;
+            border: 1px solid #e2e8f0;
+            color: #64748b;
+            border-radius: 8px;
+            padding: 8px 12px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .control-btn:hover {
+            background: #e2e8f0;
+            color: #475569;
+        }
+
+        .loading {
+            display: none;
+            color: #64748b;
+            font-style: italic;
+            margin: 10px 0;
+        }
+
+        .error-message {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            color: #dc2626;
+            padding: 12px;
+            border-radius: 8px;
+            margin: 10px 0;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                height: 100vh;
+                width: 100%;
+                border-radius: 0;
+            }
+            
+            .message-content {
+                max-width: 85%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚢 Maritime Sustainability Consultant</h1>
+            <div class="status">
+                <div class="status-dot" id="statusDot"></div>
+                <span id="statusText">Connecting...</span>
+            </div>
+        </div>
+
+        <div class="chat-container">
+            <div class="messages" id="messages">
+                <div class="controls">
+                    <button class="control-btn" onclick="checkHealth()">🔍 Check Status</button>
+                    <button class="control-btn" onclick="newConversation()">🔄 New Chat</button>
+                    <button class="control-btn" onclick="clearChat()">🗑️ Clear</button>
+                </div>
+                <div class="loading" id="loading">Maritime consultant is thinking...</div>
+            </div>
+
+            <div class="input-container">
+                <form class="input-form" id="messageForm">
+                    <div class="input-wrapper">
+                        <textarea 
+                            id="messageInput" 
+                            placeholder="Ask about maritime sustainability, emissions, regulations, carbon credits..." 
+                            rows="1"
+                        ></textarea>
+                    </div>
+                    <button type="submit" id="sendButton">
+                        <span>➤</span>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://api.sustainbuddy.ai';
+        let currentResponseId = null;
+
+        // DOM elements
+        const messagesContainer = document.getElementById('messages');
+        const messageInput = document.getElementById('messageInput');
+        const sendButton = document.getElementById('sendButton');
+        const messageForm = document.getElementById('messageForm');
+        const loading = document.getElementById('loading');
+        const statusDot = document.getElementById('statusDot');
+        const statusText = document.getElementById('statusText');
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            checkHealth();
+            messageInput.focus();
+            
+            // Auto-resize textarea
+            messageInput.addEventListener('input', function() {
+                this.style.height = 'auto';
+                this.style.height = Math.min(this.scrollHeight, 100) + 'px';
+            });
+
+            // Send on Enter (but allow Shift+Enter for new line)
+            messageInput.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    sendMessage();
+                }
+            });
+        });
+
+        // Form submission
+        messageForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            sendMessage();
+        });
+
+        // API Functions
+        async function apiCall(endpoint, method = 'GET', data = null) {
+            try {
+                const options = {
+                    method,
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                };
+
+                if (data) {
+                    options.body = JSON.stringify(data);
+                }
+
+                const response = await fetch(`${API_BASE}${endpoint}`, options);
+                return await response.json();
+            } catch (error) {
+                console.error('API call failed:', error);
+                return { success: false, error: error.message };
+            }
+        }
+
+        // Health check
+        async function checkHealth() {
+            const result = await apiCall('/health');
+            
+            if (result.status === 'healthy') {
+                statusDot.className = 'status-dot';
+                statusText.textContent = 'Connected';
+                addSystemMessage('✅ Maritime Sustainability Chatbot ready!');
+            } else {
+                statusDot.className = 'status-dot error';
+                statusText.textContent = 'Connection failed';
+                addSystemMessage(`❌ Health check failed: ${result.error || 'Unknown error'}`);
+            }
+        }
+
+        // New conversation
+        async function newConversation() {
+            currentResponseId = null; // Reset conversation state
+            addSystemMessage('🔄 New conversation started!');
+        }
+
+        // Send message
+        async function sendMessage() {
+            const message = messageInput.value.trim();
+            if (!message) return;
+
+            // Add user message to UI
+            addMessage(message, 'user');
+            messageInput.value = '';
+            messageInput.style.height = 'auto';
+
+            // Disable input while processing
+            setLoading(true);
+
+            // Prepare request data for our Flask backend
+            const requestData = {
+                message: message
+            };
+
+            // Add previous_response_id if we have one (for conversation continuity)
+            if (currentResponseId) {
+                requestData.previous_response_id = currentResponseId;
+            }
+
+            // Send to API
+            const result = await apiCall('/chat', 'POST', requestData);
+
+            setLoading(false);
+
+            if (result.success) {
+                // Update current response ID for next message
+                currentResponseId = result.response_id;
+                
+                // Format the response from our structured output
+                const response = result.response;
+                let formattedResponse = response.answer;
+                
+                // Add source information if available
+                if (response.source_file && response.source_file !== 'N/A') {
+                    formattedResponse += `\n\n📄 Source: ${response.source_file}`;
+                    if (response.source_quote && response.source_quote !== 'N/A') {
+                        formattedResponse += `\n💬 Quote: "${response.source_quote}"`;
+                    }
+                    if (response.source_quote_location) {
+                        formattedResponse += `\n📍 Page ${response.source_quote_location.page}, Line ${response.source_quote_location.line}`;
+                    }
+                }
+                
+                addMessage(formattedResponse, 'bot');
+            } else {
+                addMessage(`Error: ${result.error}`, 'bot', true);
+            }
+        }
+
+        // UI Helper Functions
+        function addMessage(content, sender, isError = false) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${sender}`;
+
+            const avatar = document.createElement('div');
+            avatar.className = 'message-avatar';
+            avatar.textContent = sender === 'user' ? 'U' : '🚢';
+
+            const messageContent = document.createElement('div');
+            messageContent.className = 'message-content';
+            
+            if (isError) {
+                messageContent.style.background = '#fef2f2';
+                messageContent.style.color = '#dc2626';
+                messageContent.style.border = '1px solid #fecaca';
+            }
+
+            // Format content (preserve line breaks)
+            messageContent.textContent = content;
+
+            messageDiv.appendChild(avatar);
+            messageDiv.appendChild(messageContent);
+
+            // Insert before loading and controls
+            const loading = document.getElementById('loading');
+            messagesContainer.insertBefore(messageDiv, loading);
+
+            // Scroll to bottom
+            scrollToBottom();
+        }
+
+        function addSystemMessage(content) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'error-message';
+            messageDiv.textContent = content;
+            
+            const loading = document.getElementById('loading');
+            messagesContainer.insertBefore(messageDiv, loading);
+            scrollToBottom();
+        }
+
+        function setLoading(isLoading) {
+            loading.style.display = isLoading ? 'block' : 'none';
+            sendButton.disabled = isLoading;
+            messageInput.disabled = isLoading;
+            
+            if (!isLoading) {
+                messageInput.focus();
+            }
+            
+            scrollToBottom();
+        }
+
+        function scrollToBottom() {
+            setTimeout(() => {
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            }, 100);
+        }
+
+        function clearChat() {
+            // Remove all messages except controls, loading, and system messages
+            const messages = messagesContainer.querySelectorAll('.message');
+            messages.forEach(msg => msg.remove());
+            
+            addSystemMessage('💬 Chat cleared!');
+        }
+
+        // Auto-scroll on window resize
+        window.addEventListener('resize', scrollToBottom);
+    </script>
+</body>
+</html>

@@ -1,0 +1,22 @@
+# Core dependencies
+openai>=1.40.0
+flask==3.0.0
+flask-cors==4.0.0
+python-dotenv==1.0.0
+
+# HTTP client dependencies (compatible versions)
+httpx>=0.25.0
+requests>=2.31.0
+urllib3>=1.26.0,<3.0.0
+
+# Additional dependencies
+typing-extensions>=4.5.0
+
+# Development dependencies (optional)
+pytest==7.4.0
+black==23.7.0
+flake8==6.0.0
+
+# Production dependencies (optional)
+gunicorn==21.2.0
+redis==5.0.0

@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SustainBuddy API Documentation</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f8fafc;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            color: white;
+            padding: 2rem 0;
+            margin-bottom: 2rem;
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .logo {
+            max-height: 80px;
+            width: auto;
+        }
+
+        .header-text h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: #22d3ee;
+        }
+
+        .header-text p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        /* Navigation */
+        .nav {
+            background: white;
+            padding: 1rem 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            margin-bottom: 2rem;
+        }
+
+        .nav ul {
+            list-style: none;
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav a {
+            text-decoration: none;
+            color: #64748b;
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+
+        .nav a:hover {
+            background: #f1f5f9;
+            color: #0369a1;
+        }
+
+        /* Main Content */
+        .content {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+
+        .section {
+            padding: 2rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .section:last-child {
+            border-bottom: none;
+        }
+
+        .section h2 {
+            font-size: 1.8rem;
+            color: #1e293b;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .section h3 {
+            font-size: 1.3rem;
+            color: #374151;
+            margin: 1.5rem 0 1rem 0;
+        }
+
+        .section p {
+            color: #64748b;
+            margin-bottom: 1rem;
+        }
+
+        /* Code blocks */
+        .code-block {
+            background: #1e293b;
+            color: #e2e8f0;
+            padding: 1.5rem;
+            border-radius: 8px;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 0.9rem;
+            overflow-x: auto;
+            margin: 1rem 0;
+            position: relative;
+        }
+
+        .code-block::before {
+            content: attr(data-lang);
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            background: #374151;
+            color: #9ca3af;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+        }
+
+        .json { color: #fbbf24; }
+        .string { color: #34d399; }
+        .number { color: #60a5fa; }
+        .boolean { color: #f87171; }
+        .null { color: #9ca3af; }
+
+        /* Method badges */
+        .method {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-right: 1rem;
+        }
+
+        .method.get {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .method.post {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        /* Endpoint sections */
+        .endpoint {
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            margin: 1.5rem 0;
+            overflow: hidden;
+        }
+
+        .endpoint-header {
+            background: #f8fafc;
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .endpoint-body {
+            padding: 1.5rem;
+        }
+
+        .endpoint-url {
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 1.1rem;
+            color: #1e293b;
+            font-weight: 600;
+        }
+
+        /* Status codes */
+        .status-codes {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+
+        .status-code {
+            background: #f8fafc;
+            padding: 1rem;
+            border-radius: 6px;
+            border-left: 4px solid #22d3ee;
+        }
+
+        .status-code.error {
+            border-left-color: #ef4444;
+        }
+
+        .status-code h4 {
+            color: #1e293b;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Tables */
+        .params-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+        }
+
+        .params-table th,
+        .params-table td {
+            text-align: left;
+            padding: 0.75rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .params-table th {
+            background: #f8fafc;
+            font-weight: 600;
+            color: #374151;
+        }
+
+        .required {
+            color: #ef4444;
+            font-weight: 600;
+        }
+
+        .optional {
+            color: #6b7280;
+        }
+
+        /* Features list */
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .feature {
+            background: #f8fafc;
+            padding: 1.5rem;
+            border-radius: 8px;
+            border-left: 4px solid #22d3ee;
+        }
+
+        .feature h4 {
+            color: #1e293b;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Footer */
+        .footer {
+            background: #1e293b;
+            color: white;
+            text-align: center;
+            padding: 2rem 0;
+            margin-top: 4rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .nav ul {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .section {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <img src="https://sustainbuddy.s3.ap-south-1.amazonaws.com/Header-v7-02.png" alt="SustainBuddy Logo" class="logo">
+                <div class="header-text">
+                    <h1>API Documentation</h1>
+                    <p>Maritime Sustainability Consulting API</p>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <nav class="nav">
+        <div class="container">
+            <ul>
+                <li><a href="#overview">Overview</a></li>
+                <li><a href="#authentication">Authentication</a></li>
+                <li><a href="#endpoints">Endpoints</a></li>
+                <li><a href="#examples">Examples</a></li>
+                <li><a href="#errors">Error Handling</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="content">
+            <section id="overview" class="section">
+                <h2>🌊 Overview</h2>
+                <p>
+                    The SustainBuddy Maritime Sustainability API provides access to expert maritime sustainability consulting 
+                    services through an AI-powered conversational interface. Get guidance on emissions reduction, regulatory compliance, 
+                    carbon credits, and sustainable shipping practices.
+                </p>
+
+                <div class="features">
+                    <div class="feature">
+                        <h4>🚢 Maritime Expertise</h4>
+                        <p>Specialized knowledge in shipping sustainability, emissions reduction, and maritime regulations.</p>
+                    </div>
+                    <div class="feature">
+                        <h4>💬 Conversational AI</h4>
+                        <p>Maintains conversation context across multiple interactions for detailed consultations.</p>
+                    </div>
+                    <div class="feature">
+                        <h4>📚 Document-Backed</h4>
+                        <p>Responses include citations from authoritative maritime sustainability documents.</p>
+                    </div>
+                    <div class="feature">
+                        <h4>🏢 Partner Integration</h4>
+                        <p>Direct connections to VERTIS, Climate Balanced, and VURDHAAN for professional services.</p>
+                    </div>
+                </div>
+
+                <h3>Base URL</h3>
+                <div class="code-block" data-lang="url">
+https://api.sustainbuddy.ai
+                </div>
+
+                <h3>Supported Regulatory Frameworks</h3>
+                <ul style="margin-left: 2rem; color: #64748b;">
+                    <li>EU MRV (Monitoring, Reporting, Verification)</li>
+                    <li>EU ETS (Emissions Trading System)</li>
+                    <li>UK MRV</li>
+                    <li>IMO DCS (Data Collection System)</li>
+                    <li>FuelEU Maritime</li>
+                </ul>
+            </section>
+
+            <section id="authentication" class="section">
+                <h2>🔐 Authentication</h2>
+                <p>
+                    Currently, the API does not require authentication for basic usage. All endpoints are publicly accessible 
+                    for maritime sustainability consultations.
+                </p>
+                <div class="code-block" data-lang="http">
+# No authentication required
+curl -X GET https://api.sustainbuddy.ai/health
+                </div>
+            </section>
+
+            <section id="endpoints" class="section">
+                <h2>🛠️ API Endpoints</h2>
+
+                <!-- Health Check Endpoint -->
+                <div class="endpoint">
+                    <div class="endpoint-header">
+                        <span class="method get">GET</span>
+                        <span class="endpoint-url">/health</span>
+                    </div>
+                    <div class="endpoint-body">
+                        <p>Check the health and status of the SustainBuddy API service.</p>
+                        
+                        <h4>Response</h4>
+                        <div class="code-block" data-lang="json">
+{
+  "status": "healthy",
+  "timestamp": "2025-07-28T12:34:56.789Z",
+  "service": "Maritime Sustainability Chatbot"
+}
+                        </div>
+
+                        <div class="status-codes">
+                            <div class="status-code">
+                                <h4>200 - OK</h4>
+                                <p>Service is healthy and operational</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Chat Endpoint -->
+                <div class="endpoint">
+                    <div class="endpoint-header">
+                        <span class="method post">POST</span>
+                        <span class="endpoint-url">/chat</span>
+                    </div>
+                    <div class="endpoint-body">
+                        <p>Send a message to the maritime sustainability consultant and receive expert guidance with source citations.</p>
+                        
+                        <h4>Request Parameters</h4>
+                        <table class="params-table">
+                            <thead>
+                                <tr>
+                                    <th>Parameter</th>
+                                    <th>Type</th>
+                                    <th>Required</th>
+                                    <th>Description</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><code>message</code></td>
+                                    <td>string</td>
+                                    <td><span class="required">Required</span></td>
+                                    <td>Your maritime sustainability question or request</td>
+                                </tr>
+                                <tr>
+                                    <td><code>previous_response_id</code></td>
+                                    <td>string</td>
+                                    <td><span class="optional">Optional</span></td>
+                                    <td>ID from previous response to continue conversation</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <h4>Request Example</h4>
+                        <div class="code-block" data-lang="json">
+{
+  "message": "What are the main strategies for reducing carbon emissions in shipping?",
+  "previous_response_id": "resp_abc123..."
+}
+                        </div>
+
+                        <h4>Response</h4>
+                        <div class="code-block" data-lang="json">
+{
+  "success": true,
+  "response": {
+    "answer": "Shipping companies can reduce carbon emissions through several key strategies including alternative fuels, energy efficiency improvements, operational optimizations, and regulatory compliance measures...",
+    "source_quote": "Alternative fuels such as ammonia and hydrogen offer significant potential for emissions reduction in maritime transport.",
+    "source_file": "maritime_sustainability_guide.pdf",
+    "source_quote_location": {
+      "page": 15,
+      "line": 23
+    }
+  },
+  "response_id": "resp_def456...",
+  "is_new_conversation": false,
+  "timestamp": "2025-07-28T12:34:56.789Z"
+}
+                        </div>
+
+                        <div class="status-codes">
+                            <div class="status-code">
+                                <h4>200 - OK</h4>
+                                <p>Successful response with maritime consultation</p>
+                            </div>
+                            <div class="status-code error">
+                                <h4>400 - Bad Request</h4>
+                                <p>Missing or empty message parameter</p>
+                            </div>
+                            <div class="status-code error">
+                                <h4>500 - Internal Server Error</h4>
+                                <p>Service error or AI processing failure</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- New Conversation Endpoint -->
+                <div class="endpoint">
+                    <div class="endpoint-header">
+                        <span class="method post">POST</span>
+                        <span class="endpoint-url">/new-conversation</span>
+                    </div>
+                    <div class="endpoint-body">
+                        <p>Start a new conversation session. This is a convenience endpoint to signal a fresh consultation.</p>
+                        
+                        <h4>Response</h4>
+                        <div class="code-block" data-lang="json">
+{
+  "success": true,
+  "message": "Ready for new conversation. Send your first message to /chat without previous_response_id.",
+  "timestamp": "2025-07-28T12:34:56.789Z"
+}
+                        </div>
+
+                        <div class="status-codes">
+                            <div class="status-code">
+                                <h4>200 - OK</h4>
+                                <p>New conversation session ready</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="examples" class="section">
+                <h2>💡 Usage Examples</h2>
+
+                <h3>Starting a New Conversation</h3>
+                <div class="code-block" data-lang="bash">
+curl -X POST https://api.sustainbuddy.ai/chat \
+  -H "Content-Type: application/json" \
+  -d '{
+    "message": "What is the EU ETS for shipping?"
+  }'
+                </div>
+
+                <h3>Continuing a Conversation</h3>
+                <div class="code-block" data-lang="bash">
+curl -X POST https://api.sustainbuddy.ai/chat \
+  -H "Content-Type: application/json" \
+  -d '{
+    "message": "How does this compare to IMO regulations?",
+    "previous_response_id": "resp_abc123..."
+  }'
+                </div>
+
+                <h3>JavaScript Integration</h3>
+                <div class="code-block" data-lang="javascript">
+class SustainBuddyClient {
+  constructor(apiUrl = 'https://api.sustainbuddy.ai') {
+    this.apiUrl = apiUrl;
+    this.currentResponseId = null;
+  }
+
+  async sendMessage(message) {
+    const payload = { message };
+    
+    if (this.currentResponseId) {
+      payload.previous_response_id = this.currentResponseId;
+    }
+
+    const response = await fetch(`${this.apiUrl}/chat`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+
+    const data = await response.json();
+    
+    if (data.success) {
+      this.currentResponseId = data.response_id;
+      return data.response;
+    } else {
+      throw new Error(data.error);
+    }
+  }
+
+  newConversation() {
+    this.currentResponseId = null;
+  }
+}
+
+// Usage
+const client = new SustainBuddyClient();
+
+// Start conversation
+const response1 = await client.sendMessage("What is FuelEU Maritime?");
+console.log(response1.answer);
+
+// Continue conversation
+const response2 = await client.sendMessage("What are the compliance requirements?");
+console.log(response2.answer);
+                </div>
+
+                <h3>Python Integration</h3>
+                <div class="code-block" data-lang="python">
+import requests
+import json
+
+class SustainBuddyClient:
+    def __init__(self, api_url="https://api.sustainbuddy.ai"):
+        self.api_url = api_url
+        self.current_response_id = None
+    
+    def send_message(self, message):
+        payload = {"message": message}
+        
+        if self.current_response_id:
+            payload["previous_response_id"] = self.current_response_id
+        
+        response = requests.post(
+            f"{self.api_url}/chat",
+            json=payload,
+            headers={"Content-Type": "application/json"}
+        )
+        
+        data = response.json()
+        
+        if data["success"]:
+            self.current_response_id = data["response_id"]
+            return data["response"]
+        else:
+            raise Exception(data["error"])
+    
+    def new_conversation(self):
+        self.current_response_id = None
+
+# Usage
+client = SustainBuddyClient()
+
+# Start conversation
+response1 = client.send_message("What are carbon credits for shipping?")
+print(response1["answer"])
+
+# Continue conversation
+response2 = client.send_message("How do I get VERTIS credits?")
+print(response2["answer"])
+                </div>
+            </section>
+
+            <section id="errors" class="section">
+                <h2>⚠️ Error Handling</h2>
+                <p>
+                    The SustainBuddy API uses conventional HTTP response codes to indicate the success or failure of API requests.
+                </p>
+
+                <h3>Error Response Format</h3>
+                <div class="code-block" data-lang="json">
+{
+  "error": "Description of the error",
+  "success": false,
+  "timestamp": "2025-07-28T12:34:56.789Z"
+}
+                </div>
+
+                <h3>HTTP Status Codes</h3>
+                <div class="status-codes">
+                    <div class="status-code">
+                        <h4>200 - OK</h4>
+                        <p>Request was successful</p>
+                    </div>
+                    <div class="status-code error">
+                        <h4>400 - Bad Request</h4>
+                        <p>The request was invalid or cannot be served</p>
+                    </div>
+                    <div class="status-code error">
+                        <h4>404 - Not Found</h4>
+                        <p>The requested endpoint does not exist</p>
+                    </div>
+                    <div class="status-code error">
+                        <h4>405 - Method Not Allowed</h4>
+                        <p>The request method is not supported for this endpoint</p>
+                    </div>
+                    <div class="status-code error">
+                        <h4>500 - Internal Server Error</h4>
+                        <p>Something went wrong on our end</p>
+                    </div>
+                </div>
+
+                <h3>Common Error Scenarios</h3>
+                <div class="params-table">
+                    <table class="params-table">
+                        <thead>
+                            <tr>
+                                <th>Error</th>
+                                <th>Status</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Missing 'message' in request body</td>
+                                <td>400</td>
+                                <td>The message parameter is required for chat requests</td>
+                            </tr>
+                            <tr>
+                                <td>Empty message provided</td>
+                                <td>400</td>
+                                <td>The message cannot be empty or contain only whitespace</td>
+                            </tr>
+                            <tr>
+                                <td>Internal server error occurred</td>
+                                <td>500</td>
+                                <td>AI processing error or service unavailability</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h3>Best Practices</h3>
+                <ul style="margin-left: 2rem; color: #64748b;">
+                    <li>Always check the <code>success</code> field in the response</li>
+                    <li>Implement proper error handling for network failures</li>
+                    <li>Store <code>response_id</code> values for conversation continuity</li>
+                    <li>Handle rate limiting gracefully (if implemented)</li>
+                    <li>Validate input messages before sending requests</li>
+                </ul>
+            </section>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <p>© 2025 SustainBuddy. Maritime Sustainability Simplified.</p>
+            <p>For complex queries requiring professional services, contact VURDHAAN at <a href="mailto:connect@vurdhaan.com" style="color: #22d3ee;">connect@vurdhaan.com</a></p>
+        </div>
+    </footer>
+
+    <script>
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('nav a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                target.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            });
+        });
+
+        // Copy code blocks on click
+        document.querySelectorAll('.code-block').forEach(block => {
+            block.style.cursor = 'pointer';
+            block.title = 'Click to copy';
+            
+            block.addEventListener('click', () => {
+                navigator.clipboard.writeText(block.textContent.trim()).then(() => {
+                    const originalBg = block.style.backgroundColor;
+                    block.style.backgroundColor = '#065f46';
+                    setTimeout(() => {
+                        block.style.backgroundColor = originalBg;
+                    }, 200);
+                });
+            });
+        });
+    </script>
+</body>
+</html>
