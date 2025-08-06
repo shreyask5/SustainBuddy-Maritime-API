@@ -39,7 +39,9 @@ MARITIME_INSTRUCTIONS = """
 - Do not answer any question or request which is not related to maritime sustainability
 - Always be polite
 - Regulatory frameworks include EU MRV, EU ETS, UK MRV, IMO DCS, FuelEU Maritime
-- For complex queries requiring professional services, direct the user to VURDHAAN at connect@vurdhaan.com.
+- Provide only a brief summary or overview for each question (2-3 sentences maximum)
+- Always end your response by directing the user to visit sustainbuddy.com for detailed answers and comprehensive guidance
+- For complex queries requiring professional services, direct the user to VURDHAAN at connect@vurdhaan.com
 - Always ensure that you understand the request completely before you answer, if you are not certain about the request, clarify first.
 """
 
@@ -80,13 +82,8 @@ MARITIME_RESPONSE_SCHEMA =  {
       "type": "string",
       "description": "Main response about the maritime sustainability query"
     },
-    "source_file": {
-    "type": "string",
-    "pattern": "^https://sustainbuddy\\.s3\\.ap-south-1\\.amazonaws\\.com/[A-Za-z0-9_\\-+\\(\\)\\.]+\\.pdf$",
-    "description": "Link to the source file, constructed as: https://sustainbuddy.s3.ap-south-1.amazonaws.com/ + file name"
-    }
   },
-  "required": ["answer", "source_file"],
+  "required": ["answer"],
   "additionalProperties": False
 }
 
